@@ -1,4 +1,5 @@
-Flask==2.0.1
-tensorflow
 numpy==1.21.2
-transformers==4.12.3
+tensorflow==0.12.0
+Flask==2.0.1
+pandas==1.3.2
+tensorflow_datasets==4.7.0
