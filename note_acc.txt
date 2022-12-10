@@ -1,0 +1,2 @@
+acc: 0.9283205047825952 first model acc
+acc: 0.8941603577832942 second model acc

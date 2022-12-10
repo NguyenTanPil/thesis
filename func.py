@@ -82,3 +82,11 @@ def create_masks(inp, tar):
     dec_target_padding_mask = create_padding_mask(tar)
     combined_mask = tf.maximum(dec_target_padding_mask, look_ahead_mask)
     return enc_padding_mask, combined_mask, dec_padding_mask
+
+def remove_random_accent(text, ratio=1): 
+    words = text.split()
+    mask = np.random.random(size=len(words)) < ratio
+    for i in range(len(words)):
+        if mask[i]:
+            words[i] = unidecode.unidecode(words[i])
+    return ' '.join(words)

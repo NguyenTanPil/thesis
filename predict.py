@@ -37,7 +37,8 @@ def replace_none_accent_word(text, idx, recommend_words):
     text_list = text.split(" ")
     for i, value in enumerate(idx):
         if value == False:
-            text_list[i] = recommend_words[text_list[i]][0]
+            if len(recommend_words[text_list[i]]) != 0:
+                text_list[i] = recommend_words[text_list[i]][0]
     return " ".join(text_list)
 
 def predict_next_word(inp_sentence, decoder_input):
@@ -64,7 +65,7 @@ def add_predict_word(text: str, predict_id, idx):
     return " ".join(sub_text)
 
 
-def predict_sentence(text, idx):
+def replace_sentence(text, idx):
     while False in idx:
         index = idx.index(False)
         inp_sentence = remove_random_accent(text, 1)
@@ -77,9 +78,9 @@ def predict_sentence(text, idx):
         idx[index] = True
     return text
 
-text = "chuyện nhugn nguoi yêu xa"
-wrong_words, idx = spell_check(text)
-recommend_words = spell_recommend(wrong_words)
-replace_text = replace_none_accent_word(text, idx, recommend_words)
-predict_text = predict_sentence(replace_text, idx)
-print(predict_text)
+def predict_sentence(text):
+    wrong_words, idx = spell_check(text)
+    recommend_words = spell_recommend(wrong_words)
+    replace_text = replace_none_accent_word(text, idx, recommend_words)
+    predict_text = replace_sentence(replace_text, idx)
+    return predict_text

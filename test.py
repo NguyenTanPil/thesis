@@ -6,6 +6,11 @@ from tokenizer import test_data
 import numpy as np
 import phunspell
 from load_model import transformer
+import unidecode
+import string
+import pandas as pd
+from predict import predict_sentence
+import time
 
 def evaluate(inp_sentence):
     start_token = [tokenizer_ipt.vocab_size]
@@ -50,8 +55,32 @@ def translate(sentence, plot=''):
                                             if i < tokenizer_opt.vocab_size])  
     return predicted_sentence
 
+def remove_random_accent(text, ratio=1): 
+    words = text.split()
+    mask = np.random.random(size=len(words)) < ratio
+    for i in range(len(words)):
+        if mask[i]:
+            words[i] = unidecode.unidecode(words[i])
+    return ' '.join(words)
 
-# inp = test_data['input'].values
-# tar = test_data['output'].values
-# inp = np.array([" ".join(val.split(" ")[:38]) for val in inp])
-# tar = np.array([" ".join(val.split(" ")[:38]) for val in tar])
+inp = test_data['input'].values
+tar = test_data['output'].values
+inp = np.array([" ".join(val.split(" ")[:38]) for val in inp])
+tar = np.array([" ".join(val.split(" ")[:38]) for val in tar])
+tar_data = []
+for val in tar:
+    temp = val.translate(str.maketrans("", "", string.punctuation))
+    temp = [val for val in temp.split(" ") if val != ""]
+    temp = " ".join(temp)
+    tar_data.append(temp)
+inp_data = pd.read_csv("data_no_punctuation.csv")
+predict_texts = []
+start_time = time.time()
+for idx, val in enumerate(inp_data["0"].values):
+    predict_texts.append(predict_sentence(val))
+    if (idx + 1) % 100 == 0:
+        print(f"idx: {idx} === {time.time() - start_time}")
+        start_time = time.time()
+predict_texts = pd.DataFrame(predict_texts)
+predict_texts.to_csv("predict_texts.csv", index=False)
+print(predict_texts)
